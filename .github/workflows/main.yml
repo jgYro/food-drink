@@ -16,7 +16,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: "3.10.0" 
+        flutter-version: "3.10.0"  # Set your Flutter version
 
     - name: Increment bundle version
       id: increment-version
@@ -36,13 +36,31 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Add and commit the changes
         git add pubspec.yaml
-        git commit -m "Incremented bundle version to $BASE_VERSION+$NEW_BUILD_NUMBER"
+        git commit -m "Incremented bundle version to $BASE_VERSION+$NEW_BUILD_NUMBER" || exit 0
+
+        # Attempt to pull with rebase, handling conflicts
+        if ! git pull --rebase "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" main; then
+          echo "Conflict detected. Aborting rebase and resetting to remote state."
+          git rebase --abort
+          git reset --hard "origin/main"
+          
+          # Re-apply version increment after reset
+          echo "Reapplying version increment after resolving conflict."
+          CURRENT_VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}')
+          BASE_VERSION=$(echo "$CURRENT_VERSION" | cut -d"+" -f1)
+          BUILD_NUMBER=$(echo "$CURRENT_VERSION" | cut -d"+" -f2)
+          NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
+          sed -i "s/version: $CURRENT_VERSION/version: $BASE_VERSION+$NEW_BUILD_NUMBER/" pubspec.yaml
+          
+          # Re-commit after resolving conflict
+          git add pubspec.yaml
+          git commit -m "Incremented bundle version to $BASE_VERSION+$NEW_BUILD_NUMBER"
+        fi
         
-        # Pull remote changes to avoid conflicts
-        git pull --rebase "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" main
-        
-        # Push the changes after pulling
+        # Push changes
         git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" HEAD:main
 
     - name: Create and push a new tag
