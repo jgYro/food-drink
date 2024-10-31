@@ -12,37 +12,39 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final _loginEmailController = TextEditingController();
+  final _loginPasswordController = TextEditingController();
+  final _signupEmailController = TextEditingController();
+  final _signupPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
-  bool _isLogin = true; // Toggle between login and signup modes
-  bool _isLoading = false; // Loading state
+  bool _isLoading = false;
 
-  Future<void> _submitForm() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  Future<void> _handleLogin() async {
+    if (_loginEmailController.text.isEmpty ||
+        _loginPasswordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
       );
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      if (_isLogin) {
-        await _authService.signInWithEmail(
-          _emailController.text,
-          _passwordController.text,
-        );
-      } else {
-        await _authService.signUpWithEmail(
-          _emailController.text,
-          _passwordController.text,
-        );
-      }
+      await _authService.signInWithEmail(
+        _loginEmailController.text,
+        _loginPasswordController.text,
+      );
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -51,35 +53,55 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      String message;
-      switch (e.code) {
-        case 'weak-password':
-          message = 'The password provided is too weak.';
-          break;
-        case 'email-already-in-use':
-          message = 'An account already exists for that email.';
-          break;
-        case 'user-not-found':
-          message = 'No user found for that email.';
-          break;
-        case 'wrong-password':
-          message = 'Wrong password provided.';
-          break;
-        default:
-          message = 'An error occurred: ${e.message}';
-      }
-
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
+          SnackBar(content: Text(e.message ?? 'An error occurred')),
         );
       }
     } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleSignup() async {
+    if (_signupEmailController.text.isEmpty ||
+        _signupPasswordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    if (_signupPasswordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _authService.signUpWithEmail(
+        _signupEmailController.text,
+        _signupPasswordController.text,
+      );
+
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
       }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'An error occurred')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -159,67 +181,105 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isLogin ? 'Login' : 'Sign Up'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'LOGIN'),
+            Tab(text: 'SIGN UP'),
+          ],
+        ),
       ),
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
+          TabBarView(
+            controller: _tabController,
+            children: [
+              // Login Tab
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      controller: _loginEmailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      enabled: !_isLoading,
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    enabled: !_isLoading,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _loginPasswordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                      enabled: !_isLoading,
                     ),
-                    obscureText: true,
-                    enabled: !_isLoading,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _submitForm,
-                    child: Text(_isLogin ? 'Login' : 'Sign Up'),
-                  ),
-                  TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            setState(() {
-                              _isLogin = !_isLogin;
-                            });
-                          },
-                    child: Text(
-                      _isLogin
-                          ? 'Need an account? Sign up'
-                          : 'Have an account? Login',
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _handleLogin,
+                      child: const Text('Login'),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _loginWithGoogle,
-                    icon: const Icon(Icons.login),
-                    label: const Text('Sign in with Google'),
-                  ),
-                  _buildAppleSignInButton(),
-                ],
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: _isLoading ? null : _loginWithGoogle,
+                      icon: const Icon(Icons.login),
+                      label: const Text('Sign in with Google'),
+                    ),
+                    _buildAppleSignInButton(),
+                  ],
+                ),
               ),
-            ),
+              // Sign Up Tab
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      controller: _signupEmailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      enabled: !_isLoading,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _signupPasswordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                      enabled: !_isLoading,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                      enabled: !_isLoading,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _handleSignup,
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           if (_isLoading)
             const Positioned.fill(
@@ -234,8 +294,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _tabController.dispose();
+    _loginEmailController.dispose();
+    _loginPasswordController.dispose();
+    _signupEmailController.dispose();
+    _signupPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 }
