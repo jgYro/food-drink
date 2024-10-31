@@ -36,6 +36,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git pull
         git add pubspec.yaml
         git commit -m "Incremented bundle version to $BASE_VERSION+$NEW_BUILD_NUMBER"
         git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" HEAD:main
