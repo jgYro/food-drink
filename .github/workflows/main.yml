@@ -1,24 +1,19 @@
-# .github/workflows/version-bump.yml
-name: Version Bump on PR to Production
+name: Update Version and Tag
 on:
-  pull_request:
-    types: [opened, synchronize]
+  push:
     branches:
       - production
 
 jobs:
   update-version:
-    if: github.head_ref == 'dev'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.head_ref }}
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
         
@@ -40,47 +35,20 @@ jobs:
         
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         
-    - name: Commit and push changes
+    - name: Commit and tag version update
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Amend the last commit to include version update
         git add pubspec.yaml
-        git commit -m "Increment bundle version to ${{ env.NEW_VERSION }}"
-        git push origin HEAD:${{ github.head_ref }}
+        git commit --amend --no-edit
+        
+        # Create tag with new version
+        git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
+        
+        # Force push both the commit and tag
+        git push --force origin production
+        git push origin "v${{ env.NEW_VERSION }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
----
-# .github/workflows/create-tag.yml
-name: Create Tag After PR Merge
-on:
-  pull_request:
-    types: [closed]
-    branches:
-      - production
-
-jobs:
-  create-tag:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        
-    - name: Get version from pubspec.yaml
-      id: get-version
-      run: |
-        VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}')
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-        
-    - name: Create and push tag
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git tag -a "v${{ env.VERSION }}" -m "Release v${{ env.VERSION }}"
-        git push origin "v${{ env.VERSION }}"
