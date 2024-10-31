@@ -46,7 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '644663398536',
     projectId: 'foodanddrink-a3b0a',
     authDomain: 'foodanddrink-a3b0a.firebaseapp.com',
-    storageBucket: 'foodanddrink-a3b0a.appspot.com',
+    storageBucket: 'foodanddrink-a3b0a.firebasestorage.app',
     measurementId: 'G-YLPFYNDYLT',
   );
 
@@ -55,24 +55,26 @@ class DefaultFirebaseOptions {
     appId: '1:644663398536:android:4cc91c896a3a6ea73c0f3d',
     messagingSenderId: '644663398536',
     projectId: 'foodanddrink-a3b0a',
-    storageBucket: 'foodanddrink-a3b0a.appspot.com',
+    storageBucket: 'foodanddrink-a3b0a.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyD4kiI37aT76sG39zB9yMzAN8A5s47L7y8',
-    appId: '1:644663398536:ios:1de85880a155665e3c0f3d',
+    appId: '1:644663398536:ios:8044fa92b2ba98043c0f3d',
     messagingSenderId: '644663398536',
     projectId: 'foodanddrink-a3b0a',
-    storageBucket: 'foodanddrink-a3b0a.appspot.com',
-    iosBundleId: 'com.example.foodAndDrink',
+    storageBucket: 'foodanddrink-a3b0a.firebasestorage.app',
+    iosClientId: '644663398536-lof7rr3832gngsncrerl1du5ulq51dgb.apps.googleusercontent.com',
+    iosBundleId: 'com.food.drink',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyD4kiI37aT76sG39zB9yMzAN8A5s47L7y8',
-    appId: '1:644663398536:ios:1de85880a155665e3c0f3d',
+    appId: '1:644663398536:ios:3747554620cd8e0a3c0f3d',
     messagingSenderId: '644663398536',
     projectId: 'foodanddrink-a3b0a',
-    storageBucket: 'foodanddrink-a3b0a.appspot.com',
+    storageBucket: 'foodanddrink-a3b0a.firebasestorage.app',
+    iosClientId: '644663398536-kgoo4gbdvngpd9dir8frt6q6cifrdto7.apps.googleusercontent.com',
     iosBundleId: 'com.example.foodAndDrink',
   );
 
@@ -82,7 +84,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '644663398536',
     projectId: 'foodanddrink-a3b0a',
     authDomain: 'foodanddrink-a3b0a.firebaseapp.com',
-    storageBucket: 'foodanddrink-a3b0a.appspot.com',
+    storageBucket: 'foodanddrink-a3b0a.firebasestorage.app',
     measurementId: 'G-BJHGX6DF4T',
   );
 }

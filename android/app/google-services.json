@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "644663398536",
     "project_id": "foodanddrink-a3b0a",
-    "storage_bucket": "foodanddrink-a3b0a.appspot.com"
+    "storage_bucket": "foodanddrink-a3b0a.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,12 @@
           "package_name": "com.food.drink"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "644663398536-e20eq4lj59pn59cp9iknasroujs2i2ad.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDjF3NRoW2ujn5TieEO-uAutmXMdWJzl5s"
@@ -20,26 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:644663398536:android:f61510028267c65f3c0f3d",
-        "android_client_info": {
-          "package_name": "come.food.drink"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDjF3NRoW2ujn5TieEO-uAutmXMdWJzl5s"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "644663398536-e20eq4lj59pn59cp9iknasroujs2i2ad.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "644663398536-kgoo4gbdvngpd9dir8frt6q6cifrdto7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.foodAndDrink"
+              }
+            }
+          ]
         }
       }
     }

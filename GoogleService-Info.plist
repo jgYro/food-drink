@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>644663398536-kgoo4gbdvngpd9dir8frt6q6cifrdto7.apps.googleusercontent.com</string>
+	<string>644663398536-lof7rr3832gngsncrerl1du5ulq51dgb.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.644663398536-kgoo4gbdvngpd9dir8frt6q6cifrdto7</string>
+	<string>com.googleusercontent.apps.644663398536-lof7rr3832gngsncrerl1du5ulq51dgb</string>
 	<key>API_KEY</key>
 	<string>AIzaSyD4kiI37aT76sG39zB9yMzAN8A5s47L7y8</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,11 +13,11 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.foodAndDrink</string>
+	<string>com.food.drink</string>
 	<key>PROJECT_ID</key>
 	<string>foodanddrink-a3b0a</string>
 	<key>STORAGE_BUCKET</key>
-	<string>foodanddrink-a3b0a.appspot.com</string>
+	<string>foodanddrink-a3b0a.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:644663398536:ios:1de85880a155665e3c0f3d</string>
+	<string>1:644663398536:ios:8044fa92b2ba98043c0f3d</string>
 </dict>
 </plist>
