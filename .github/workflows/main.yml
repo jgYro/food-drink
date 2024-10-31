@@ -1,3 +1,4 @@
+# .github/workflows/version-bump.yml
 name: Version Bump on PR to Production
 on:
   pull_request:
@@ -17,7 +18,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.head_ref }}  # Checkout the dev branch
+        ref: ${{ github.head_ref }}
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
         
@@ -48,3 +49,38 @@ jobs:
         git push origin HEAD:${{ github.head_ref }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+---
+# .github/workflows/create-tag.yml
+name: Create Tag After PR Merge
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - production
+
+jobs:
+  create-tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        
+    - name: Get version from pubspec.yaml
+      id: get-version
+      run: |
+        VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}')
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        
+    - name: Create and push tag
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a "v${{ env.VERSION }}" -m "Release v${{ env.VERSION }}"
+        git push origin "v${{ env.VERSION }}"
