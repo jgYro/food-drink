@@ -54,8 +54,28 @@ class _LoginScreenState extends State<LoginScreen>
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
+        String errorMessage;
+        switch (e.code) {
+          case 'user-not-found':
+            errorMessage =
+                'No account found with this email. Please sign up first.';
+            break;
+          case 'wrong-password':
+            errorMessage = 'Incorrect password. Please try again.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'Please enter a valid email address.';
+            break;
+          case 'user-disabled':
+            errorMessage =
+                'This account has been disabled. Please contact support.';
+            break;
+          default:
+            errorMessage =
+                'Login failed. Please check your credentials and try again.';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'An error occurred')),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     } finally {
@@ -96,8 +116,28 @@ class _LoginScreenState extends State<LoginScreen>
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
+        String errorMessage;
+        switch (e.code) {
+          case 'email-already-in-use':
+            errorMessage =
+                'An account already exists with this email. Please login instead.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'Please enter a valid email address.';
+            break;
+          case 'weak-password':
+            errorMessage =
+                'Password is too weak. Please use a stronger password.';
+            break;
+          case 'operation-not-allowed':
+            errorMessage =
+                'Account creation is currently disabled. Please try again later.';
+            break;
+          default:
+            errorMessage = 'Sign up failed. Please try again.';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'An error occurred')),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     } finally {
