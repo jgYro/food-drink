@@ -6,6 +6,8 @@ on:
 
 jobs:
   update-version:
+    # Skip if the push is from github-actions bot
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
