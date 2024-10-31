@@ -40,10 +40,10 @@ jobs:
         git commit -m "Incremented bundle version to $BASE_VERSION+$NEW_BUILD_NUMBER"
         git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" HEAD:main
 
-    - name: Create and push a new tag
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-      run: |
-        NEW_TAG="v$BASE_VERSION+$NEW_BUILD_NUMBER"
-        git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
-        git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" "$NEW_TAG"
+        - name: Create and push a new tag
+          env:
+            GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          run: |
+            NEW_TAG="v${BASE_VERSION}+${NEW_BUILD_NUMBER}"
+            git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
+            git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" "$NEW_TAG"
