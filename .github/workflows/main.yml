@@ -56,8 +56,3 @@ jobs:
         curl -X POST \
           https://api.codemagic.io/hooks/6722d3099c133f11ae00d62c \
           -H "Content-Type: application/json" \
-          -d '{
-            "version": "${{ env.NEW_VERSION }}",
-            "branch": "${{ github.head_ref }}",
-            "commit": "${{ github.sha }}"
-          }'
