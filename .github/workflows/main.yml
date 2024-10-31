@@ -19,7 +19,7 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}  # Changed to use default GITHUB_TOKEN
+        token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
@@ -50,3 +50,14 @@ jobs:
         git push origin HEAD:${{ github.head_ref }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Trigger Codemagic webhook
+      run: |
+        curl -X POST \
+          https://api.codemagic.io/hooks/6722d3099c133f11ae00d62c \
+          -H "Content-Type: application/json" \
+          -d '{
+            "version": "${{ env.NEW_VERSION }}",
+            "branch": "${{ github.head_ref }}",
+            "commit": "${{ github.sha }}"
+          }'
