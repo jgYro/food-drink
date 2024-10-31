@@ -1,0 +1,49 @@
+name: Update Flutter Bundle Version
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.10.0"  # Set your Flutter version
+
+    - name: Increment bundle version
+      id: increment-version
+      run: |
+        # Extract current version from pubspec.yaml
+        CURRENT_VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}')
+        BASE_VERSION=$(echo "$CURRENT_VERSION" | cut -d"+" -f1)
+        BUILD_NUMBER=$(echo "$CURRENT_VERSION" | cut -d"+" -f2)
+        NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
+        
+        # Update pubspec.yaml with the new version
+        sed -i "s/version: $CURRENT_VERSION/version: $BASE_VERSION+$NEW_BUILD_NUMBER/" pubspec.yaml
+
+    - name: Commit and push version update
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add pubspec.yaml
+        git commit -m "Incremented bundle version to $BASE_VERSION+$NEW_BUILD_NUMBER"
+        git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" HEAD:main
+
+    - name: Create and push a new tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        NEW_TAG="v$BASE_VERSION+$NEW_BUILD_NUMBER"
+        git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
+        git push "https://${GITHUB_TOKEN}@github.com/jgYro/food-drink.git" "$NEW_TAG"
