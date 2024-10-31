@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "644663398536",
     "project_id": "foodanddrink-a3b0a",
-    "storage_bucket": "foodanddrink-a3b0a.appspot.com"
+    "storage_bucket": "foodanddrink-a3b0a.firebasestorage.app"
   },
   "client": [
     {
@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "644663398536-e20eq4lj59pn59cp9iknasroujs2i2ad.apps.googleusercontent.com",
+          "client_id": "644663398536-oqppndtb9o2mtg6uio0lmdjal72pkful.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
