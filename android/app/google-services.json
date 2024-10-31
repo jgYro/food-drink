@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "644663398536",
+    "project_id": "foodanddrink-a3b0a",
+    "storage_bucket": "foodanddrink-a3b0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644663398536:android:4cc91c896a3a6ea73c0f3d",
+        "android_client_info": {
+          "package_name": "com.food.drink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjF3NRoW2ujn5TieEO-uAutmXMdWJzl5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644663398536:android:f61510028267c65f3c0f3d",
+        "android_client_info": {
+          "package_name": "come.food.drink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjF3NRoW2ujn5TieEO-uAutmXMdWJzl5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
