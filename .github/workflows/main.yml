@@ -1,21 +1,32 @@
+name: Version Bump on PR to Production
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize]
     branches:
       - production
+
 jobs:
   update-version:
+    # Only run this job if the PR is from the dev branch
+    if: github.head_ref == 'dev'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
+        ref: ${{ github.head_ref }}  # Checkout the PR branch (dev)
         fetch-depth: 0  # Ensures full git history is fetched
-
+        token: ${{ secrets.PAT_TOKEN }}  # Use PAT for authentication
+        
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: "3.10.0"  # Set your Flutter version
-
+        flutter-version: "3.10.0"
+        
     - name: Increment bundle version
       id: increment-version
       run: |
@@ -33,20 +44,19 @@ jobs:
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_ENV
         echo "NEW_BUILD_NUMBER=$NEW_BUILD_NUMBER" >> $GITHUB_ENV
-
-    - name: Commit and push version update
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        
+    - name: Commit version update
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add pubspec.yaml
-        git commit -m "Incremented bundle version to ${{ env.NEW_VERSION }}"
-        git push
-
-    - name: Create and push a new tag
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        git commit -m "Increment bundle version to ${{ env.NEW_VERSION }}"
+        
+    - name: Push changes to PR branch
+      run: git push origin HEAD:${{ github.head_ref }}
+        
+    - name: Create tag after PR is merged
+      if: github.event.pull_request.merged == true
       run: |
         NEW_TAG="v${{ env.NEW_VERSION }}"
         git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
